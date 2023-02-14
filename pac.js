@@ -4,7 +4,22 @@ function FindProxyForURL(url, host) {
 
   if (isPlainHostName(host)) return DIRECT;
 
-  const hosts = ['*github*', '*google*', '*youtube*', '*postman*', '*ytimg*', '*dmhy*', '*.ruanyifeng.com'];
+  const hosts = [
+    '*.bgm.tv',
+    '*.v2ex.*',
+    '*.npmjs.com',
+    '*.w3.org',
+    '*.wikipedia.org',
+    '*.ant.design',
+    '*github*',
+    '*google*',
+    '*.googlevideo.com',
+    '*youtube*',
+    '*postman*',
+    '*ytimg*',
+    '*dmhy*',
+    '*.ruanyifeng.com'
+  ];
 
   for (const _host of hosts) {
     if (shExpMatch(host, _host)) return proxy_yes;
