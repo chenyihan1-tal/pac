@@ -5,20 +5,20 @@ function FindProxyForURL(url, host) {
   if (isPlainHostName(host)) return DIRECT;
 
   const hosts = [
-    '*.bgm.tv',
-    '*.v2ex.*',
-    '*.npmjs.com',
-    '*.w3.org',
-    '*.wikipedia.org',
-    '*.ant.design',
+    '*bgm.tv',
+    '*v2ex.*',
+    '*npmjs.com',
+    '*w3.org',
+    '*wikipedia.org',
+    '*ant.design',
     '*github*',
     '*google*',
-    '*.googlevideo.com',
+    '*googlevideo.com',
     '*youtube*',
     '*postman*',
     '*ytimg*',
     '*dmhy*',
-    '*.ruanyifeng.com'
+    '*ruanyifeng.com'
   ];
 
   for (const _host of hosts) {
