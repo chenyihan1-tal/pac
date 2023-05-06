@@ -18,7 +18,8 @@ function FindProxyForURL(url, host) {
     '*postman*',
     '*ytimg*',
     '*dmhy*',
-    '*ruanyifeng.com'
+    '*ruanyifeng.com',
+    'duckduckgo.com'
   ];
 
   for (const _host of hosts) {
