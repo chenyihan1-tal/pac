@@ -19,7 +19,8 @@ function FindProxyForURL(url, host) {
     '*ytimg*',
     '*dmhy*',
     '*ruanyifeng.com',
-    'duckduckgo.com'
+    'duckduckgo.com',
+    'steamcommunity.com',
   ];
 
   for (const _host of hosts) {
