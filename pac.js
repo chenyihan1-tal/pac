@@ -21,6 +21,7 @@ function FindProxyForURL(url, host) {
     '*ruanyifeng.com',
     'duckduckgo.com',
     'steamcommunity.com',
+    '*.steampowered.com',
   ];
 
   for (const _host of hosts) {
