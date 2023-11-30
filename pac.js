@@ -23,7 +23,7 @@ function FindProxyForURL(url, host) {
     'steamcommunity.com',
     '*.steampowered.com',
     '*xargin.com',
-    'tinypng.com',
+    '*tinypng.com',
   ];
 
   for (const _host of hosts) {
