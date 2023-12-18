@@ -24,6 +24,7 @@ function FindProxyForURL(url, host) {
     '*.steampowered.com',
     '*xargin.com',
     '*tinypng.com',
+    't.me',
   ];
 
   for (const _host of hosts) {
