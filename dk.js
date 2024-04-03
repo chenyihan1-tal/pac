@@ -16,7 +16,15 @@ click(150, 1400);
 sleep(5000);
 
 // 点击打卡
-click(580, 1130);
+// 坐标打卡
+// click(580, 700);
+// sleep(1000);
+// click(580, 1130);
+
+// 控件打卡
+var button = textMatches(/^[上下]班打卡.*/).findOne();
+sendButton.click();
+
 sleep(5000);
 
 // 截图
