@@ -1,87 +1,113 @@
 device.wakeUp();
 auto.waitFor();
 
-// 打开APP
-home();
-sleep(1000);
-launchApp('知音楼');
-sleep(3000);
+var storage = storages.create("CLOCK_LOG");
 
-// 点击工作台
-click(600, 2260);
-sleep(3000);
+var doback = () => {
+  for (var i = 0; i < 5; i++) {
+    back();
+    sleep(500);
+  }
+  home();
+  sleep(500);
+};
 
-// 点击考勤打卡
-click(150, 1400);
-sleep(5000);
+var doclock = (canclock) => {
+  // 点击打卡
+  if (canclock) {
+    // 打开APP
+    launchApp("知音楼");
+    sleep(5000);
+    doback();
+    sleep(1000);
+    launchApp("知音楼");
+    sleep(5000);
 
-// 点击打卡
-// 坐标打卡
-// click(580, 700);
-// sleep(1000);
-// click(580, 1130);
+    // 点击工作台
+    id("tv_tab_title").text("工作台").findOne().parent().click();
+    sleep(5000);
 
-// 控件打卡
-var button = textMatches(/^[上下]班打卡.*/).findOne();
-sendButton.click();
+    // 点击考勤打卡
+    click(150, 1400);
+    sleep(5000);
 
-sleep(5000);
+    textMatches(/^[上下]班打卡.*/)
+      .findOne()
+      .click();
+    sleep(5000);
+  }
 
-// 截图
-takeScreenshot();
-sleep(1000);
+  // 截图
+  takeScreenshot();
+  sleep(1000);
 
-// 返回
-back();
-sleep(1000);
-back();
-sleep(1000);
-back();
-sleep(1000);
+  // 分享截图
+  click(160, 2050);
+  sleep(2000);
 
-// 打开QQ
-launchApp('QQ');
-sleep(3000);
+  // 点击分享到QQ
+  text("QQ").findOne().parent().click();
+  sleep(1000);
 
-// 点击搜索栏
-click(620, 330);
-sleep(1000);
+  text("XAVIER").findOne().parent().click();
+  sleep(1000);
 
-// 搜索QQ号
-setText('4529080');
-sleep(1000);
+  text("发送").findOne().click();
+  sleep(1000);
 
-// 点击头像
-click(450, 450);
-sleep(1000);
+  // 返回首页
+  doback();
+};
 
-// 点击发送图片
-click(255, 2300);
-sleep(1000);
+for (;;) {
+  auto.waitFor();
+  device.wakeUp();
+  device.keepScreenDim(); // 保持屏幕常亮
+  device.setBrightnessMode(0); // 设置亮度为手动模式
+  device.setBrightness(0); // 设置屏幕亮度为最低;
 
-// 点击第一张图片
-click(100, 1900);
-sleep(1000);
+  // 给我返回首页的时间
+  sleep(3000);
 
-// 点击发送
-click(950, 2220);
-sleep(1000);
+  var now = new Date();
+  var date = now.getDate();
+  var hour = now.getHours();
+  var minute = now.getMinutes();
+  var nowStr = new java.text.SimpleDateFormat("HH:mm:ss").format(now);
 
-// 返回
-back();
-sleep(1000);
-back();
-sleep(1000);
-back();
-sleep(1000);
+  var canClockin =
+    hour === 9 &&
+    minute >= 15 &&
+    minute <= 30 &&
+    storage.get(`${date}_clockin`) !== 1;
 
-// 返回首页
-sleep(1000);
-home();
+  var canClockout =
+    hour === 20 &&
+    minute >= 5 &&
+    minute <= 30 &&
+    storage.get(`${date}_clockout`) !== 1;
 
-// 锁屏
-sleep(1000);
-lockScreen();
+  // 随机睡眠7-13分钟
+  var r = Math.ceil(Math.random() * 6 + 7);
+  if (hour !== 9 && hour !== 20) {
+    r = 60;
+    if (hour === 8) {
+      r = 20;
+    }
+  }
 
-// 结束
-exit();
+  toastLog(`${nowStr} ${r} ${canClockin} ${canClockout}`);
+  sleep(500);
+
+  if (canClockin) {
+    doclock(true);
+    storage.put(`${date}_clockin`, 1);
+  } else if (canClockout) {
+    doclock(true);
+    storage.put(`${date}_clockout`, 1);
+  } else {
+    doclock(false);
+  }
+
+  sleep(r * 60 * 1000);
+}
