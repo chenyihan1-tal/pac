@@ -73,7 +73,7 @@ for (;;) {
   var date = now.getDate();
   var hour = now.getHours();
   var minute = now.getMinutes();
-  var nowStr = new java.text.SimpleDateFormat("HH:mm:ss").format(now);
+  var nowStr = new java.text.SimpleDateFormat("HH:mm").format(now);
 
   var canClockin =
     hour === 9 &&
