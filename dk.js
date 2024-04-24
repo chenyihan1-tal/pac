@@ -1,18 +1,23 @@
-device.wakeUp();
 auto.waitFor();
+
+// 返回首页
+home();
+sleep(3000);
 
 var storage = storages.create('CLOCK_LOG');
 
-var doback = () => {
+function doback() {
   for (var i = 0; i < 5; i++) {
     back();
     sleep(500);
   }
   home();
   sleep(500);
-};
+}
 
-var doclock = canclock => {
+function doclock(canclock) {
+  sleep(1000);
+
   // 点击打卡
   if (canclock) {
     // 打开APP
@@ -38,7 +43,6 @@ var doclock = canclock => {
   }
 
   // 截图
-  sleep(1000);
   takeScreenshot();
   sleep(1000);
 
@@ -58,26 +62,21 @@ var doclock = canclock => {
 
   // 返回首页
   doback();
-};
-
-function getRandomArbitrary(min, max) {
-  return Math.random() * (max - min) + min;
 }
 
 for (;;) {
-  auto.waitFor();
-  device.wakeUp();
-  device.keepScreenDim(); // 保持屏幕常亮
+  // auto.waitFor();
+  // device.wakeUp();
+  // device.keepScreenDim(); // 保持屏幕常亮
   device.setBrightnessMode(0); // 设置亮度为手动模式
   device.setBrightness(0); // 设置屏幕亮度为最低;
 
-  // 给我返回首页的时间
-  home();
+  // 唤醒屏幕
+  engines.execScript('wakeup', 'device.wakeUp();');
   sleep(3000);
 
   var now = new Date();
   var hour = now.getHours();
-  var minute = now.getMinutes();
   var date = new java.text.SimpleDateFormat('yyyy/MM/dd').format(now);
 
   // 两个小时的毫秒数
@@ -87,33 +86,44 @@ for (;;) {
   // 晚上打卡时间
   var clockoutTime = new Date(`${date} 20:00:00`).getTime() + random(1000 * 60 * 5, 1000 * 60 * 10);
 
-  var r = 0;
-
   // 如果当前时间小于早上打卡时间
   if (now.getTime() < clockinTime) {
-    r = Math.min(clockinTime - now.getTime(), twoHours);
-  }
-  // 如果早上还没有打过卡
-  else if (hour === 9 && storage.get(`${date}_clockin`) !== 1) {
-    doclock(true);
-    storage.put(`${date}_clockin`, 1);
-  }
-  // 如果当前时间小于晚上打卡时间
-  else if (now.getTime() < clockoutTime) {
-    r = Math.min(clockoutTime - now.getTime(), twoHours);
-  }
-  // 如果晚上还没有打过卡
-  else if (hour === 20 && storage.get(`${date}_clockout`) !== 1) {
-    doclock(true);
-    storage.put(`${date}_clockout`, 1);
-  } else {
-    r = twoHours * 2;
+    doclock(false);
+    lockScreen();
+    console.log('当前时间小于早上打卡时间');
+    sleep(Math.min(clockinTime - now.getTime(), twoHours));
+    continue;
   }
 
-  if (r > 0) {
-    toastLog('等待时间：' + Math.ceil(r / 1000 / 60) + '分钟');
-    doclock(false);
-    sleep(r);
+  // 如果早上还没有打过卡
+  if (hour === 9 && storage.get(`${date}_clockin`) !== 1) {
+    doclock(true);
+    storage.put(`${date}_clockin`, 1);
+    lockScreen();
+    console.log('早上还没有打过卡');
+    sleep(clockoutTime - now.getTime());
+    continue;
   }
+
+  // 如果当前时间小于晚上打卡时间
+  if (now.getTime() < clockoutTime) {
+    lockScreen();
+    console.log('当前时间小于晚上打卡时间');
+    sleep(clockoutTime - now.getTime());
+    continue;
+  }
+
+  // 如果晚上还没有打过卡
+  if (storage.get(`${date}_clockout`) !== 1) {
+    doclock(true);
+    storage.put(`${date}_clockout`, 1);
+    lockScreen();
+    console.log('晚上还没有打过卡');
+    sleep(twoHours * 5);
+    continue;
+  }
+
+  console.log('5');
+  sleep(1000 * 60);
   continue;
 }
