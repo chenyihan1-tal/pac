@@ -1,26 +1,18 @@
 auto.waitFor();
 device.wakeUp();
 
-// 返回首页
-home();
-sleep(1000);
+var storage = storages.create('CLOCK_LOG');
 
-function doback() {
+var doback = () => {
   for (var i = 0; i < 5; i++) {
     back();
     sleep(500);
   }
   home();
   sleep(500);
-}
+};
 
-function doclock(canclock) {
-  engines.execScript('wakeup', 'device.wakeUp();toast("wakeup")');
-  device.setBrightnessMode(0); // 设置亮度模式 0 手动 1 自动
-  device.setBrightness(0); // 设置屏幕亮 0-255
-
-  sleep(500);
-
+var doclock = canclock => {
   // 点击打卡
   if (canclock) {
     // 打开APP
@@ -46,6 +38,7 @@ function doclock(canclock) {
   }
 
   // 截图
+  sleep(1000);
   takeScreenshot();
   sleep(1000);
 
@@ -65,57 +58,57 @@ function doclock(canclock) {
 
   // 返回首页
   doback();
-}
-
-// 要打卡的日子
-var clockDays = [
-  '4_25',
-  '4_26',
-  '4_28',
-  '4_29',
-  '4_30',
-  '5_6',
-  '5_7',
-  '5_8',
-  '5_9',
-  '5_10',
-  '5_11',
-  '5_13',
-  '5_14',
-  '5_15',
-  '5_16',
-  '5_17',
-  '5_20',
-  '5_21',
-  '5_22',
-  '5_23',
-  '5_24',
-  '5_27',
-  '5_28',
-  '5_29',
-  '5_30',
-  '5_31',
-];
+};
 
 for (;;) {
+  device.wakeUp();
+  device.keepScreenDim(); // 保持屏幕常亮
+  device.setBrightnessMode(0); // 设置亮度为手动模式
+  device.setBrightness(0); // 设置屏幕亮度为最低;
+
+  home();
+  sleep(1000);
+
   var now = new Date();
-  var hours = now.getHours();
-  var minutes = now.getMinutes();
-  var date = new java.text.SimpleDateFormat('yyyy/MM/dd HH:mm:ss').format(now);
+  var hour = now.getHours();
+  var minute = now.getMinutes();
+  var date = new java.text.SimpleDateFormat('yyyy/MM/dd').format(now);
 
-  var isClockDay = clockDays.includes(now.getMonth() + 1 + '_' + now.getDate());
-  var canclock = isClockDay && (hours === 9 || hours === 20);
+  // 两个小时的毫秒数
+  var twoHours = 1000 * 60 * 60 * 2;
+  // 早上打卡时间
+  var clockinTime = new Date(`${date} 09:15:00`).getTime() + random(1000 * 60 * 3, 1000 * 60 * 10);
+  // 晚上打卡时间
+  var clockoutTime = new Date(`${date} 20:00:00`).getTime() + random(1000 * 60 * 5, 1000 * 60 * 10);
 
-  console.log(JSON.stringify({ date, isClockDay, canclock }));
+  var r = 0;
 
-  if (minutes === 20) {
-    doclock(canclock);
-    sleep(1000 * 60);
+  // 如果当前时间小于早上打卡时间
+  if (now.getTime() < clockinTime) {
+    r = Math.min(clockinTime - now.getTime(), twoHours);
+  }
+  // 如果早上还没有打过卡
+  else if (hour === 9 && storage.get(`${date}_clockin`) !== 1) {
+    doclock(true);
+    storage.put(`${date}_clockin`, 1);
+  }
+  // 如果当前时间小于晚上打卡时间
+  else if (now.getTime() < clockoutTime) {
+    r = Math.min(clockoutTime - now.getTime(), twoHours);
+  }
+  // 如果晚上还没有打过卡
+  else if (hour === 20 && storage.get(`${date}_clockout`) !== 1) {
+    doclock(true);
+    storage.put(`${date}_clockout`, 1);
+  } else {
+    r = twoHours;
   }
 
-  if (device.isScreenOn()) {
-    lockScreen();
+  if (r > 0) {
+    toastLog('等待时间：' + Math.ceil(r / 1000 / 60) + '分钟');
+    doclock(false);
+    sleep(r);
   }
 
-  sleep(10000);
+  continue;
 }
