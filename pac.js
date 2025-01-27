@@ -5,6 +5,7 @@ function FindProxyForURL(url, host) {
   if (isPlainHostName(host)) return DIRECT;
 
   const hosts = [
+    '*telegram.org',
     '*bgm.tv',
     '*asmr.one',
     '*v2ex.*',
