@@ -26,6 +26,7 @@ function FindProxyForURL(url, host) {
     '*xargin.com',
     '*t.me',
     '*greasyfork.org',
+    '*milkywayidle.com',
   ];
 
   for (const _host of hosts) {
