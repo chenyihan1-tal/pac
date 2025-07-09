@@ -27,6 +27,8 @@ function FindProxyForURL(url, host) {
     '*t.me',
     '*greasyfork.org',
     '*milkywayidle.com',
+    '*.hack.chat',
+    '*.qi-e.top',
   ];
 
   for (const _host of hosts) {
