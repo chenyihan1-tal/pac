@@ -1,39 +1,20 @@
+const DIRECT = "DIRECT";
+const PROXY = "SOCKS5 127.0.0.1:7890; DIRECT";
+
+const hosts = [
+  /t\.me/,
+  /telegram\.org/,
+  /bgm\.tv/,
+  /v2ex\.com/,
+  /\bgithub\.(com|io)\b/,
+  /google\.com/,
+  /youtube\.com/,
+  /dmhy\.org/,
+  /greasyfork\.org/,
+  /milkywayidle\.com/,
+  /steamcommunity\.com/,
+];
+
 function FindProxyForURL(url, host) {
-  const DIRECT = 'DIRECT';
-  const proxy_yes = 'SOCKS5 127.0.0.1:7890';
-
-  if (isPlainHostName(host)) return DIRECT;
-
-  const hosts = [
-    '*telegram.org',
-    '*bgm.tv',
-    '*asmr.one',
-    '*v2ex.*',
-    '*npmjs.com',
-    '*w3.org',
-    '*wikipedia.org',
-    '*github*',
-    '*google*',
-    '*googlevideo.com',
-    '*youtube*',
-    '*postman*',
-    '*ytimg*',
-    '*dmhy*',
-    '*ruanyifeng.com',
-    'duckduckgo.com',
-    'steamcommunity.com',
-    '*.steampowered.com',
-    '*xargin.com',
-    '*t.me',
-    '*greasyfork.org',
-    '*milkywayidle.com',
-    '*.hack.chat',
-    '*.qi-e.top',
-  ];
-
-  for (const _host of hosts) {
-    if (shExpMatch(host, _host)) return proxy_yes;
-  }
-
-  return DIRECT;
+  return hosts.some((_host) => _host.test(host)) ? PROXY : DIRECT;
 }
