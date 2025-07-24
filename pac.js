@@ -1,14 +1,14 @@
 const DIRECT = "DIRECT";
-const PROXY = "SOCKS5 127.0.0.1:7890; DIRECT";
+const PROXY = "PROXY 127.0.0.1:7890; DIRECT";
 
 const hosts = [
   /t\.me/,
-  /telegram\.org/,
+  /telegram/,
   /bgm\.tv/,
   /v2ex\.com/,
-  /\bgithub\.(com|io)\b/,
-  /.*google.*/,
-  /youtube\.com/,
+  /github/,
+  /google/,
+  /youtube/,
   /dmhy\.org/,
   /greasyfork\.org/,
   /milkywayidle\.com/,
@@ -16,5 +16,7 @@ const hosts = [
 ];
 
 function FindProxyForURL(url, host) {
+  alert(url);
+  alert(host);
   return hosts.some((_host) => _host.test(host)) ? PROXY : DIRECT;
 }
