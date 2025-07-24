@@ -7,7 +7,7 @@ const hosts = [
   /bgm\.tv/,
   /v2ex\.com/,
   /\bgithub\.(com|io)\b/,
-  /*.google\.*/,
+  /.*google.*/,
   /youtube\.com/,
   /dmhy\.org/,
   /greasyfork\.org/,
