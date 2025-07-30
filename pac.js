@@ -3,6 +3,7 @@ const PROXY = "PROXY 127.0.0.1:7890; DIRECT";
 
 const hosts = [
   /t\.me/,
+  /x\.com/,
   /telegram/,
   /bgm\.tv/,
   /v2ex\.com/,
