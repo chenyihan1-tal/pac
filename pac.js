@@ -13,6 +13,7 @@ const hosts = [
   /greasyfork\.org/,
   /milkywayidle\.com/,
   /steamcommunity\.com/,
+  /bitwarden\.com/,
 ];
 
 function FindProxyForURL(url, host) {
